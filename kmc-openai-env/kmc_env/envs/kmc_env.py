@@ -56,7 +56,8 @@ class KmcEnv(gym.Env):
         if not end_flag: #check the end flag if it is true/false or 1/0.
             reward = -1
         else:
-        #add the stuff from the notebook
+            reward = -1    
+            #add the stuff from the notebook
         
         return state, reward, end_flag
     
