@@ -22,6 +22,7 @@ class KmcEnv(gym.Env):
     
     def __init__(self):
         self.target_roughness = 0.98
+        self.end_flag=0
         #print('Current directory is {}'.format(os.getcwd()))
         #print ('Current directory of this file is {}'.format(os.path.dirname(__file__)))
         self.wdir = os.path.join(os.path.dirname(__file__),'data/')
@@ -47,6 +48,8 @@ class KmcEnv(gym.Env):
         
         s.update_rate(np.array(new_updated_rates), verbose=verbose)
         
+
+
         end_flag = s.run_to_next_step(random_seed = np.random.randint(1,99))
         
         #Now get the state and reward
@@ -78,7 +81,7 @@ class KmcEnv(gym.Env):
         full_atom_box = np.zeros([latt['box'][1],latt['box'][2],latt['box'][3] ])
         for i,j,k in arr_1:
             full_atom_box[i,j,k]=1
-        
+        end_flag=self.end_flag
         surface_proj = make_surface_proj(full_atom_box)
         rms_val = calc_roughness(surface_proj)
         results = {'atom_box': full_atom_box, 'rms_val': rms_val,
