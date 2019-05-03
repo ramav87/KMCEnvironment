@@ -1,3 +1,4 @@
+setup.py
 kmc_env.egg-info/PKG-INFO
 kmc_env.egg-info/SOURCES.txt
 kmc_env.egg-info/dependency_links.txt

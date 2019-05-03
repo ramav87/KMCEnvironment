@@ -20,21 +20,30 @@ from kmc_env.envs.kmcsim_state_funcs import make_surface_proj,calc_roughness,get
 class KmcEnv(gym.Env):
     metadata = {'render.modes': ['human']}
     
-    def __init__(self):
+    def __init__(self,box = [16, 32, 4],box_extension=12):
         self.target_roughness = 0.98
         self.end_flag=0
         #print('Current directory is {}'.format(os.getcwd()))
         #print ('Current directory of this file is {}'.format(os.path.dirname(__file__)))
         self.wdir = os.path.join(os.path.dirname(__file__),'data/')
+
         self.dep_rates = [-0.02, 0, 0.02]
-        box = [16, 32, 4]
+        
         latt = make_fcc(box)
         # extend the box in the z-direction to make space for new layers to grow
-        latt['box'][3] = 12
+        latt['box'][3] = box_extension
+
+        # self.dep_rates = [-0.02, 0, 0.02]
+        # box = [16, 32, 4]
+        # latt = make_fcc(box)
+        # # extend the box in the z-direction to make space for new layers to grow
+        # latt['box'][3] = 12
         self.latt = latt
         sim = RunSim()
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
+        #sim.t_max = t_max
+        #sim.max_time_steps = max_time_steps
         self.sim = sim
         self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
     
@@ -70,8 +79,10 @@ class KmcEnv(gym.Env):
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
         self.sim = sim
-        
-        return 1
+
+        state, _ = get_state_reward(sim, self.latt, self.target_roughness)
+
+        return state
     
     def render(self,mode='human', close=False):
         s = self.sim
