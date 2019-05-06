@@ -53,7 +53,8 @@ def get_incremented_rates(existing_rates, action, dep_rates):
     for ind, rate in enumerate(existing_rates):
         rate = max(rate+dep_rates[action[ind]],0.01)
         if rate>=0.30: rate = 0.3
-        if rate <=0.10: rate = 0.10
+        if rate <=0.01: rate = 0.01
         new_rates.append(rate)
+        print(rate)
     return new_rates
         

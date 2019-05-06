@@ -44,17 +44,17 @@ class KmcEnv(gym.Env):
         sim.init_sim()
         #sim.t_max = t_max
         #sim.max_time_steps = max_time_steps
-        self.sim = sim
-        self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
+        #self.sim = sim
+        #self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
     
     def step(self, action, verbose=False):
         #Given simulation model and the action, update the rate and continue running the simulation
         s = self.sim
         
         existing_rates = s.kmc.etree.rates
-        
+
         new_updated_rates = get_incremented_rates(existing_rates, action, self.dep_rates)
-        
+
         s.update_rate(np.array(new_updated_rates), verbose=verbose)
         
 
@@ -68,7 +68,9 @@ class KmcEnv(gym.Env):
         if not end_flag: #check the end flag if it is true/false or 1/0.
             reward = -1
         else:
-            reward = -1    
+            rms_val = calc_roughness(state)
+            if np.abs(rms_val - self.target_roughness)<0.05: reward = 1000
+            else: reward = -1    
             #add the stuff from the notebook
         
         return state, reward, end_flag
@@ -78,11 +80,15 @@ class KmcEnv(gym.Env):
         print('Current directory is {}'.format(os.getcwd()))
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
+        sim.update_rate(np.array([np.random.randint(low=1, high = 3)*0.03,
+                           np.random.randint(low=1, high = 3)*0.03,
+                           np.random.randint(low=1, high = 2)*0.03]), verbose=True)
+        end_flag = sim.run_to_next_step(random_seed = np.random.randint(1,99))
         self.sim = sim
-
-        state, _ = get_state_reward(sim, self.latt, self.target_roughness)
-
-        return state
+        self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
+        state, reward = self.state, self.reward 
+        self.end_flag=0
+        return state,reward
     
     def render(self,mode='human', close=False):
         s = self.sim
