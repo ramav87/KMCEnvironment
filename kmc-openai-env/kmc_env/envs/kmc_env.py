@@ -21,6 +21,7 @@ from kmc_env.envs.kmcsim_state_funcs import make_surface_proj,calc_roughness,get
 class KmcEnv(gym.Env):
     metadata = {'render.modes': ['human']}
     
+<<<<<<< HEAD
     def __init__(self,box = [16, 32, 4],box_extension=12,target_roughness=0.98,
     reward_type='box',reward_multiplier=1000,reward_tolerance=1,
     rates_spread=0.01,rates_adjustment=1,
@@ -39,6 +40,17 @@ class KmcEnv(gym.Env):
         self.reward_tolerance = reward_tolerance
         self.rates_spread=rates_spread
     
+=======
+    def __init__(self,box = [16, 32, 4],box_extension=12):
+        self.target_roughness = 0.98
+        self.end_flag=0
+        #print('Current directory is {}'.format(os.getcwd()))
+        #print ('Current directory of this file is {}'.format(os.path.dirname(__file__)))
+        self.wdir = os.path.join(os.path.dirname(__file__),'data/')
+
+        self.dep_rates = [-0.02, 0, 0.02]
+        
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
         latt = make_fcc(box)
         # extend the box in the z-direction to make space for new layers to grow
         latt['box'][3] = box_extension
@@ -75,6 +87,7 @@ class KmcEnv(gym.Env):
         state, reward = get_state_reward(s, self.latt, self.target_roughness)
         
         #Override the reward here
+<<<<<<< HEAD
         # if not end_flag: #check the end flag if it is true/false or 1/0.
         #     reward = -1
         # else:
@@ -94,6 +107,14 @@ class KmcEnv(gym.Env):
             reward=1-np.abs(value*10/self.reward_tolerance)
             reward=reward*self.reward_multiplier
             reward[reward<-1]=-1
+=======
+        if not end_flag: #check the end flag if it is true/false or 1/0.
+            reward = -1
+        else:
+            rms_val = calc_roughness(state)
+            if np.abs(rms_val - self.target_roughness)<0.05: reward = 1000
+            else: reward = -1    
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
             #add the stuff from the notebook
         
         return state, reward, end_flag
@@ -103,9 +124,15 @@ class KmcEnv(gym.Env):
         print('Current directory is {}'.format(os.getcwd()))
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
+<<<<<<< HEAD
         sim.update_rate(np.array([np.random.randint(low=1, high = 4)*self.rates_spread,
                            np.random.randint(low=1, high = 4)*self.rates_spread,
                            np.random.randint(low=1, high = 4)*self.rates_spread]), verbose=verbose)
+=======
+        sim.update_rate(np.array([np.random.randint(low=1, high = 3)*0.03,
+                           np.random.randint(low=1, high = 3)*0.03,
+                           np.random.randint(low=1, high = 2)*0.03]), verbose=True)
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
         end_flag = sim.run_to_next_step(random_seed = np.random.randint(1,99))
         self.sim = sim
         self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)

@@ -53,9 +53,15 @@ def get_incremented_rates(existing_rates, action, dep_rates):
     for ind, rate in enumerate(existing_rates):
         rate = max(rate+dep_rates[action[ind]],0.01)
         if rate>=0.30: rate = 0.3
+<<<<<<< HEAD
         if rate <=0.010: rate = 0.010
         new_rates.append(rate)
         #print(rate)
+=======
+        if rate <=0.01: rate = 0.01
+        new_rates.append(rate)
+        print(rate)
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
     return new_rates
         
 def gaussian(x, mu, sig):
