@@ -4,6 +4,9 @@
 Created on Fri Apr  5 19:15:58 2019
 
 @author: rvv
+
+#TODO: Rama - write a method of class to change and rewrite kmc.input and ni.xyz
+#TODO: Rama - check why the state output is given twice after end flag
 """
 
 import gym
