@@ -35,6 +35,8 @@ def get_state_reward(sim_model, latt, target_roughness):
     #To get the final state put atoms into atom box
     arr = sim_model.kmc.get_conf()
     arr_1 = np.array(arr[0])
+
+
     full_atom_box = np.zeros([latt['box'][1],latt['box'][2],latt['box'][3] ])
     for i,j,k in arr_1:
         full_atom_box[i,j,k]=1
@@ -51,7 +53,16 @@ def get_incremented_rates(existing_rates, action, dep_rates):
     for ind, rate in enumerate(existing_rates):
         rate = max(rate+dep_rates[action[ind]],0.01)
         if rate>=0.30: rate = 0.3
-        if rate <=0.10: rate = 0.10
+<<<<<<< HEAD
+        if rate <=0.010: rate = 0.010
         new_rates.append(rate)
+        #print(rate)
+=======
+        if rate <=0.01: rate = 0.01
+        new_rates.append(rate)
+        print(rate)
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
     return new_rates
         
+def gaussian(x, mu, sig):
+    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))

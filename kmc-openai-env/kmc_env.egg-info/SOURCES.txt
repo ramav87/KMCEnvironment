@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+README.md
+=======
+>>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
+setup.py
 kmc_env.egg-info/PKG-INFO
 kmc_env.egg-info/SOURCES.txt
 kmc_env.egg-info/dependency_links.txt
