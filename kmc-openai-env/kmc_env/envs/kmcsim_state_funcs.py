@@ -49,20 +49,37 @@ def get_state_reward(sim_model, latt, target_roughness):
 
 def get_incremented_rates(existing_rates, action, dep_rates):
     #Given some rates and actions, increment appropriately and return updated rates
+    #Action input is number for the VPG, vector for DQN
     new_rates=[]
+    if type(action)==list:
+        action_=action
+    else:
+        x1=int(action%3)
+        action=(action-x1)//3
+        x2=int(action%3)
+        action=(action-x2)//3
+        x3=int(action%3)
+        action_=[x1,x2,x3]
+
     for ind, rate in enumerate(existing_rates):
-        rate = max(rate+dep_rates[action[ind]],0.01)
+        rate = max(rate+dep_rates[action_[ind]],0.01)
         if rate>=0.30: rate = 0.3
-<<<<<<< HEAD
         if rate <=0.010: rate = 0.010
         new_rates.append(rate)
         #print(rate)
-=======
-        if rate <=0.01: rate = 0.01
-        new_rates.append(rate)
-        print(rate)
->>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
     return new_rates
         
 def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
+
+# old version, added just in case
+# # def get_incremented_rates(existing_rates, action, dep_rates, ):
+#     #Given some rates and actions, increment appropriately and return updated rates
+#     new_rates=[]
+#     for ind, rate in enumerate(existing_rates):
+#         rate = max(rate+dep_rates[action[ind]],0.01)
+#         if rate>=0.30: rate = 0.3
+#         if rate <=0.010: rate = 0.010
+#         new_rates.append(rate)
+#         #print(rate)
+#     return new_rates
