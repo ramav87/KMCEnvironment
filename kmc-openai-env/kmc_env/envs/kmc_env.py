@@ -65,9 +65,10 @@ class KmcEnv(gym.Env):
         s = self.sim
         
         existing_rates = s.kmc.etree.rates
-
+        print('Existing rates: {}'.format(existing_rates))
         new_updated_rates = get_incremented_rates(existing_rates, action, self.dep_rates)
 
+        print('New rates: {}'.format(new_updated_rates))
         s.update_rate(np.array(new_updated_rates), verbose=verbose)
         
 
@@ -106,9 +107,12 @@ class KmcEnv(gym.Env):
         #print('Current directory is {}'.format(os.getcwd()))
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
+        #TODO: Clean this line below up!!
         sim.update_rate(np.array([np.random.randint(low=1, high = 4)*self.rates_spread,
                            np.random.randint(low=1, high = 4)*self.rates_spread,
-                           np.random.randint(low=1, high = 4)*self.rates_spread]), verbose=verbose)
+                           np.random.randint(low=1, high = 4)*self.rates_spread,
+                                 np.random.randint(low=1, high=4) * self.rates_spread,
+        np.random.randint(low=1, high=4) * self.rates_spread]), verbose=verbose)
         end_flag = sim.run_to_next_step(random_seed = np.random.randint(1,99))
         self.sim = sim
         self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
@@ -128,6 +132,6 @@ class KmcEnv(gym.Env):
         surface_proj = make_surface_proj(full_atom_box)
         rms_val = calc_roughness(surface_proj)
         results = {'atom_box': full_atom_box, 'rms_val': rms_val,
-'surface_proj': surface_proj, 'end_flag':end_flag}
+        'surface_proj': surface_proj, 'end_flag':end_flag}
 
         return results

@@ -50,18 +50,22 @@ def get_state_reward(sim_model, latt, target_roughness):
 def get_incremented_rates(existing_rates, action, dep_rates):
     #Given some rates and actions, increment appropriately and return updated rates
     new_rates=[]
+    print('Now inside get incremented rates function')
+    print('apparently the existing rates are {}'.format(existing_rates))
+    print('And we have an action of {}'.format(action))
     for ind, rate in enumerate(existing_rates):
+        
         rate = max(rate+dep_rates[action[ind]],0.01)
         if rate>=0.30: rate = 0.3
-<<<<<<< HEAD
+
         if rate <=0.010: rate = 0.010
         new_rates.append(rate)
         #print(rate)
-=======
-        if rate <=0.01: rate = 0.01
-        new_rates.append(rate)
-        print(rate)
->>>>>>> aa062c7658a8442b12718bcf7da09bab26a1d224
+
+        #if rate <=0.01: rate = 0.01
+        #new_rates.append(rate)
+        #print(rate)
+
     return new_rates
         
 def gaussian(x, mu, sig):
