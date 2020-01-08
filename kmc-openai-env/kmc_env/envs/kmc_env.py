@@ -19,7 +19,8 @@ from kmcsim.sim import RunSim
 import os
 import numpy as np
 import collections
-from kmc_env.envs.kmcsim_state_funcs import make_surface_proj,calc_roughness,get_state_reward,get_incremented_rates,gaussian
+from kmc_env.envs.kmcsim_state_funcs import make_surface_proj, \
+calc_roughness,get_state_reward,get_incremented_rates,gaussian, get_new_diffusion_rates
 
 class KmcEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -28,6 +29,7 @@ class KmcEnv(gym.Env):
     reward_type='box',reward_multiplier=1000,reward_tolerance=1,
     rates_spread=0.01,rates_adjustment=1,
     folder_with_params='None'):
+        
         self.target_roughness = target_roughness
         self.end_flag=0
         #print('Current directory is {}'.format(os.getcwd()))
@@ -64,10 +66,13 @@ class KmcEnv(gym.Env):
         #Given simulation model and the action, update the rate and continue running the simulation
         s = self.sim
         
-        existing_rates = s.kmc.etree.rates
+        existing_rates = s.kmc.etree.rates #need to add a temperature parameter the simulation
+        existing_temperature = s.kmc.temp
+        
         print('Existing rates: {}'.format(existing_rates))
-        new_updated_rates = get_incremented_rates(existing_rates, action, self.dep_rates)
-
+        new_updated_rates, new_temp = get_incremented_rates(existing_rates, 
+                                                            action, self.dep_rates, existing_temperature)
+        s.temp = new_temp
         print('New rates: {}'.format(new_updated_rates))
         s.update_rate(np.array(new_updated_rates), verbose=verbose)
         
@@ -107,12 +112,19 @@ class KmcEnv(gym.Env):
         #print('Current directory is {}'.format(os.getcwd()))
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
-        #TODO: Clean this line below up!!
-        sim.update_rate(np.array([np.random.randint(low=1, high = 4)*self.rates_spread,
-                           np.random.randint(low=1, high = 4)*self.rates_spread,
-                           np.random.randint(low=1, high = 4)*self.rates_spread,
-                                 np.random.randint(low=1, high=4) * self.rates_spread,
-        np.random.randint(low=1, high=4) * self.rates_spread]), verbose=verbose)
+
+        depo_rate_a = np.random.randint(low=1, high = 4)*self.rates_spread
+        depo_rate_b = np.random.randint(low=1, high = 4)*self.rates_spread
+        
+        #random Temperature start
+        temp = np.random.randint(low=750, high = 950)
+        diffusion_rates = get_new_diffusion_rates(temp)
+        sim.temp = temp
+        
+        sim.update_rate(np.array([depo_rate_a, depo_rate_b, 
+                                  diffusion_rates[0], diffusion_rates[1],
+                                 diffusion_rates[2]]), verbose=verbose)
+        
         end_flag = sim.run_to_next_step(random_seed = np.random.randint(1,99))
         self.sim = sim
         self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
