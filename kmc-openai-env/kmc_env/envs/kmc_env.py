@@ -69,14 +69,12 @@ class KmcEnv(gym.Env):
         existing_rates = s.kmc.etree.rates #need to add a temperature parameter the simulation
         existing_temperature = s.kmc.temp
         
-        print('Existing rates: {}'.format(existing_rates))
+        #print('Existing rates: {}'.format(existing_rates))
         new_updated_rates, new_temp = get_incremented_rates(existing_rates, 
                                                             action, self.dep_rates, existing_temperature)
         s.temp = new_temp
-        print('New rates: {}'.format(new_updated_rates))
+        #print('New rates: {}'.format(new_updated_rates))
         s.update_rate(np.array(new_updated_rates), verbose=verbose)
-        
-
 
         end_flag = s.run_to_next_step(random_seed = np.random.randint(1,99))
         
