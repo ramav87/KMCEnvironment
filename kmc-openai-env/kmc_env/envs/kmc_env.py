@@ -5,8 +5,6 @@ Created on Fri Apr  5 19:15:58 2019
 
 @author: rvv
 
-#TODO: Rama - write a method of class to change and rewrite kmc.input and ni.xyz
-#TODO: Rama - check why the state output is given twice after end flag
 """
 
 import gym
@@ -25,15 +23,14 @@ calc_roughness,get_state_reward,get_incremented_rates,gaussian, get_new_diffusio
 class KmcEnv(gym.Env):
     metadata = {'render.modes': ['human']}
     
-    def __init__(self,box = [16, 32, 4],box_extension=12,target_roughness=0.98,
+    def __init__(self,target_roughness=0.98,
     reward_type='box',reward_multiplier=1000,reward_tolerance=1,
     rates_spread=0.01,rates_adjustment=1,
     folder_with_params='None'):
         
         self.target_roughness = target_roughness
         self.end_flag=0
-        #print('Current directory is {}'.format(os.getcwd()))
-        #print ('Current directory of this file is {}'.format(os.path.dirname(__file__)))
+
         if folder_with_params=='None':
             self.wdir = os.path.join(os.path.dirname(__file__),'data/')
         else:
@@ -43,24 +40,12 @@ class KmcEnv(gym.Env):
         self.dep_rates = [-0.02, 0, 0.02]*rates_adjustment
         self.reward_tolerance = reward_tolerance
         self.rates_spread=rates_spread
-    
-        latt = make_fcc(box)
-        # extend the box in the z-direction to make space for new layers to grow
-        latt['box'][3] = box_extension
 
-        # self.dep_rates = [-0.02, 0, 0.02]
-        # box = [16, 32, 4]
-        # latt = make_fcc(box)
-        # # extend the box in the z-direction to make space for new layers to grow
-        # latt['box'][3] = 12
-        self.latt = latt
         sim = RunSim()
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
-        #sim.t_max = t_max
-        #sim.max_time_steps = max_time_steps
-        #self.sim = sim
-        #self.state, self.reward = get_state_reward(self.sim, self.latt, self.target_roughness)
+        self.latt = sim.kmc.latt
+
     
     def step(self, action, verbose=False):
         #Given simulation model and the action, update the rate and continue running the simulation
@@ -113,7 +98,8 @@ class KmcEnv(gym.Env):
 
         depo_rate_a = np.random.randint(low=1, high = 4)*self.rates_spread
         depo_rate_b = np.random.randint(low=1, high = 4)*self.rates_spread
-        
+        print('New depo rates are: ')
+        print(depo_rate_a, depo_rate_b)
         #random Temperature start
         temp = np.random.randint(low=750, high = 950)
         diffusion_rates = get_new_diffusion_rates(temp)

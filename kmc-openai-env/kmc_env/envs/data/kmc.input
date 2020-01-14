@@ -1,7 +1,7 @@
 time: 60.0
-time_steps: 300
+time_steps: 100
 print_period: 5.0
-update_rate_period: 12.0
+update_rate_period: 2.0
 save_traj_period: 300.0
 param_file: params
 incfg_file: ni.xyz
