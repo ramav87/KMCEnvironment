@@ -4,6 +4,6 @@ An OpenAI Environment based on a kinetic Monte Carlo (KMC) Simulation engine for
 
 You must first install the KMC engine, kmcsim (available here : , ) and then you can install this environment with 
 
-pip install -e .
+```pip install -e .```
 
 Stay tuned for usable notebook with Deep Q learning 
