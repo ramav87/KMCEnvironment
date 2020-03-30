@@ -35,9 +35,7 @@ def get_state_reward(sim_model, latt, target_roughness):
     #To get the final state put atoms into atom box
     arr = sim_model.kmc.get_conf()
     arr_1 = np.array(arr[0])
-
-    print('Printing lattice: ', latt['box'])
-    full_atom_box = np.zeros([latt['box'][1],latt['box'][2],latt['box'][3] ])
+    full_atom_box = np.zeros((latt.shape[0],latt.shape[1],latt.shape[2]))
     try:
         for i,j,k in arr_1:
             full_atom_box[i,j,k]=1
