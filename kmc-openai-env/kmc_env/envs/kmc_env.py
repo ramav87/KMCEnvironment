@@ -44,6 +44,7 @@ class KmcEnv(gym.Env):
         sim = RunSim()
         sim.read(os.path.join(self.wdir, 'kmc.input'))
         sim.init_sim()
+        sim.kmc.latt['box'][3] = 64
         self.latt = sim.kmc.latt
 
     

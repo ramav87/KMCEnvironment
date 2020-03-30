@@ -36,11 +36,14 @@ def get_state_reward(sim_model, latt, target_roughness):
     arr = sim_model.kmc.get_conf()
     arr_1 = np.array(arr[0])
 
-
+    print('Printing lattice: ', latt['box'])
     full_atom_box = np.zeros([latt['box'][1],latt['box'][2],latt['box'][3] ])
-    for i,j,k in arr_1:
-        full_atom_box[i,j,k]=1
-        
+    try:
+        for i,j,k in arr_1:
+            full_atom_box[i,j,k]=1
+    except IndexError:
+            print('Warning: IndexError in kmcSim. Diagnose this fault.')
+
     surface_proj = make_surface_proj(full_atom_box)
     rms_val = calc_roughness(surface_proj)
     reward = -1*np.sqrt((target_roughness-rms_val)**2) #penalty for straying from desired roughness.
